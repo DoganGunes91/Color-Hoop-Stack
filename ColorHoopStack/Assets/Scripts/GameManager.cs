@@ -21,7 +21,51 @@ public class GameManager : MonoBehaviour
                 {
                     if (SeciliObje !=null && SeciliStand != hit.collider.gameObject)
                     {
+                        Stand _stand = hit.collider.GetComponent<Stand>();
 
+                        if (_stand.Cemberler.Count !=4 && _stand.Cemberler.Count !=0)
+                        {
+                            if (Cember._renk == _stand.Cemberler[^1].GetComponent<Cember>()._renk)
+                            {
+                                SeciliStand.GetComponent<Stand>().SoketDegistirmeIslemler(SeciliObje);
+                                Cember.HareketEt("PozisyonDegistir", hit.collider.gameObject, _stand.MusaitSoketiVer(), _stand.HareketPozisyonu);
+
+                                _stand._bosOlanSoket++;
+                                _stand.Cemberler.Add(SeciliObje);
+                                _stand.CemberleriKontrolEt();
+                                SeciliObje = null;
+                                SeciliStand = null;
+                            }
+                            else
+                            {
+                                Cember.HareketEt("SoketeGeriGit");
+                                SeciliObje = null;
+                                SeciliStand = null;
+                            }                            
+                        }
+                        else if (_stand.Cemberler.Count == 0)
+                        {
+                            SeciliStand.GetComponent<Stand>().SoketDegistirmeIslemler(SeciliObje);
+                            Cember.HareketEt("PozisyonDegistir", hit.collider.gameObject, _stand.MusaitSoketiVer(), _stand.HareketPozisyonu);
+
+                            _stand._bosOlanSoket++;
+                            _stand.Cemberler.Add(SeciliObje);
+                            _stand.CemberleriKontrolEt();
+                            SeciliObje = null;
+                            SeciliStand = null;
+                        }
+                        else
+                        {
+                            Cember.HareketEt("SoketeGeriGit");
+                            SeciliObje = null;
+                            SeciliStand = null;
+                        }                        
+                    }
+                    else if (SeciliStand == hit.collider.gameObject)
+                    {
+                        Cember.HareketEt("SoketeGeriGit");
+                        SeciliObje = null;
+                        SeciliStand = null;
                     }
                     else
                     {
@@ -40,5 +84,10 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+    }
+    public void StandTamamlandi()
+    {
+        _tamamlananStandSayisi++;
+        if (_tamamlananStandSayisi == _hedefStandSayisi) Debug.Log("Kazandýn");
     }
 }

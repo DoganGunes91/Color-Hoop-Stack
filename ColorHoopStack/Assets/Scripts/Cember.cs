@@ -11,7 +11,7 @@ public class Cember : MonoBehaviour
     public string _renk;
 
     GameObject _hareketPosizyonu;
-    GameObject _aitOlduguStand;
+    GameObject _gidecegiStand;
 
     bool _secildi, _posDegistir, _soketOtur, _soketeGeriGit;
 
@@ -23,14 +23,16 @@ public class Cember : MonoBehaviour
                 _hareketPosizyonu = GidilecekObje;
                 _secildi = true;
                 break;
+
             case "PozisyonDegistir":
-
+                _gidecegiStand = Stand;
+                AitOlduguCemberSoketi = Soket;
+                _hareketPosizyonu = GidilecekObje;
+                _posDegistir = true;
                 break;
-            case "SoketeOtur":
 
-                break;
             case "SoketeGeriGit":
-
+                _soketeGeriGit = true;
                 break;
         }
     }
@@ -42,6 +44,43 @@ public class Cember : MonoBehaviour
             if (Vector3.Distance(transform.position, _hareketPosizyonu.transform.position) < 0.10)
             {
                 _secildi = false;
+            }
+        }
+        if (_posDegistir)
+        {
+            transform.position = Vector3.Lerp(transform.position, _hareketPosizyonu.transform.position, 0.2f);
+            if (Vector3.Distance(transform.position, _hareketPosizyonu.transform.position) < 0.10)
+            {
+                _posDegistir = false;
+                _soketOtur = true;
+            }
+        }
+        if (_soketOtur)
+        {
+            transform.position = Vector3.Lerp(transform.position, _hareketPosizyonu.transform.position, 0.2f);
+            if (Vector3.Distance(transform.position, _hareketPosizyonu.transform.position) < 0.10)
+            {
+                transform.position = AitOlduguCemberSoketi.transform.position;
+                _soketOtur = false;
+
+                AitOlduguStand = _gidecegiStand;
+
+                if (AitOlduguStand.GetComponent<Stand>().Cemberler.Count > 1)
+                {
+                    AitOlduguStand.GetComponent<Stand>().Cemberler[^2].GetComponent<Cember>()._hareketEdebilirMi = false;
+                }
+
+                GameManager._hareketVar = false;
+            }
+        }
+        if (_soketeGeriGit)
+        {
+            transform.position = Vector3.Lerp(transform.position, _hareketPosizyonu.transform.position, 0.2f);
+            if (Vector3.Distance(transform.position, _hareketPosizyonu.transform.position) < 0.10)
+            {
+                transform.position = AitOlduguCemberSoketi.transform.position;
+                _soketeGeriGit = false;
+                GameManager._hareketVar = false;
             }
         }
     }
